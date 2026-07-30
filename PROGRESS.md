@@ -7,8 +7,8 @@
 - ヒアリング完了
 - 提案承認
 - 要件定義・設計作成完了（Phase 0）
-- 共通基盤実装完了（Phase 1、コード面。Supabaseプロジェクト作成等の外部手続きは未完了）
-- Worktree作成済み、各領域の実装前
+- 共通基盤実装完了（Phase 1、外部手続き含めて完了）
+- Worktree作成済み、各領域の実装前で一旦区切り
 
 ## 開発ログ
 
@@ -28,14 +28,21 @@
   - 共通TypeScript型、isAfterHours純粋関数、入力検証・レート制限、FAQ投入スクリプト
   - vitestテスト環境（25件のテストが通過）
 - feature/customer-widget、feature/ai-backend、feature/operator-dashboardの3Worktreeを作成
+- Prettier導入、コードベース全体をフォーマット
 
-## 残っている外部手続き（コードでは対応できない作業）
-- Supabaseプロジェクトの実作成、.env.localへの実キー設定
-- Supabaseダッシュボードで匿名認証を有効化
-- オペレーター初期2名をSupabase Auth + operator_profilesへ登録
-- マイグレーションの本番/検証環境への適用（`supabase db push`等）
-- `npm run seed:faqs`によるFAQ18件の投入（OPENAI_API_KEY設定後）
+### 2026-07-31
+- Supabaseプロジェクト（CS-chatbot-project、ref: wdocnpmvoneobaoxnlbv）を作成・リンク
+- `supabase db push`でマイグレーション9本を本番DBへ適用し、5テーブル・claim_conversation RPCの到達性を確認
+- supabase link時にDB接続文字列がsupabase/.temp/へキャッシュされる問題を発見し.gitignoreへ追加
+- Supabaseダッシュボードで匿名認証を有効化し、`auth.signInAnonymously()`で動作確認
+- ANTHROPIC_API_KEY・OPENAI_API_KEYを設定
+- `npm run seed:faqs`でFAQ18件にembeddingを生成しfaqsテーブルへ投入（行数確認済み）
+- オペレーター初期2名を登録（模擬案件のためダミーアドレス。operator1@example.com=admin、operator2@example.com=operator）。再登録用に`npm run register:operator`スクリプトを追加
+- `getCurrentOperator()`ヘルパー（src/lib/auth/）を追加
+- Phase 1の全タスクが完了し、実装を一旦区切り
 
 ## 次の作業
-1. 上記の外部手続きを完了する
-2. 各Worktreeで担当領域の実装に着手（Phase 2〜4）
+1. 各Worktreeで担当領域の実装に着手（Phase 2〜4）
+   - feature/customer-widget: 顧客チャットUI
+   - feature/ai-backend: AIバックエンド（FAQ類似検索RPCの実装含む）
+   - feature/operator-dashboard: オペレーター管理画面（ログイン画面等）
