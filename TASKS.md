@@ -29,7 +29,7 @@
 - [x] ARCHITECTURE.md §6の推奨ディレクトリでsrc/以下を作成
 
 ### Supabase接続・環境変数
-- [ ] Supabaseプロジェクト作成（実際のSupabaseアカウント・ダッシュボード操作が必要、未着手）
+- [x] Supabaseプロジェクト作成（CS-chatbot-project、project ref: wdocnpmvoneobaoxnlbv、リンク済み）
 - [x] .env.example作成（ANTHROPIC_API_KEY / SUPABASE_URL / SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY / OPENAI_API_KEYのキー名のみ記載）
 - [x] .env.localを.gitignoreへ追加し、Git管理対象から除外
 - [x] src/lib/supabase/にクライアント用（anon key）とサーバー用（service role key）のSupabaseクライアントを分離して実装
@@ -45,7 +45,7 @@
 - [x] 外部キー制約: messages.conversation_id→conversations.id、conversations.assigned_operator_id→operator_profiles.user_id
 - [x] インデックス作成: conversations(status, last_message_at desc) / conversations(customer_user_id) / conversations(assigned_operator_id) / messages(conversation_id, created_at) / faqs(category) / faqs embeddingベクトルインデックス / business_holidays(holiday_date)
 - [x] オペレーター担当開始の原子的更新処理（assigned_operator_idがNULLの場合のみ成功するUPDATE、D-008、claim_conversation関数として実装）
-- [ ] 本番適用前にテスト環境で動作確認（Docker/Supabase CLIのローカル実行環境がこのセッションになく未検証。`supabase db push`または`supabase start`で要確認）
+- [x] 本番適用前にテスト環境で動作確認（`supabase db push`で実プロジェクト（CS-chatbot-project）へ適用済み。5テーブル・claim_conversation RPCの到達性を確認。ただし専用のステージング環境は別途用意しておらず、今回適用した先が唯一のSupabaseプロジェクト）
 
 ### RLSポリシー
 - [x] conversations: 顧客はcustomer_user_id=auth.uid()の行のみSELECT・自分の会話のみINSERT
