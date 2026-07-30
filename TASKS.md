@@ -57,8 +57,8 @@
 
 ### 認証
 - [x] Supabase匿名認証を有効化（D-003、`auth.signInAnonymously()`が成功することを確認済み）
-- [ ] オペレーター認証（Supabase Auth）とoperator_profilesの紐付け、role（operator/admin）確認処理（DB側のis_operator()関数までは実装済み。ログイン画面自体はPhase 4）
-- [ ] オペレーター初期2名をSupabase Auth + operator_profilesへ管理者が手動登録（D-010、実プロジェクト作成後に対応）
+- [x] オペレーター認証（Supabase Auth）とoperator_profilesの紐付け、role（operator/admin）確認処理（DB側is_operator()関数＋src/lib/auth/get-current-operator.tsを実装。ログイン画面UI自体はPhase 4）
+- [x] オペレーター初期2名をSupabase Auth + operator_profilesへ管理者が手動登録（D-010、模擬案件のためダミーアドレスで登録。operator1@example.com=admin、operator2@example.com=operator。`npm run register:operator`で再現可能）
 
 ### 共通TypeScript型
 - [x] src/types/domain.tsにConversationStatus / SenderType / ConversationCategory / EscalationReasonを定義（ARCHITECTURE.md §5）

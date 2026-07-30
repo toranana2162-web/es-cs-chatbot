@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "seed:faqs": "tsx scripts/seed-faqs.ts",
+    "register:operator": "tsx scripts/register-operator.ts",
     "format": "prettier --write ."
   },
   "dependencies": {
