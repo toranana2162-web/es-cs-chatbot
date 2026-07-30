@@ -56,7 +56,7 @@
 - [x] 全テーブルでRLSが有効化されていることを確認
 
 ### 認証
-- [ ] Supabase匿名認証を有効化（Supabaseダッシュボードの設定操作、D-003、未着手）
+- [x] Supabase匿名認証を有効化（D-003、`auth.signInAnonymously()`が成功することを確認済み）
 - [ ] オペレーター認証（Supabase Auth）とoperator_profilesの紐付け、role（operator/admin）確認処理（DB側のis_operator()関数までは実装済み。ログイン画面自体はPhase 4）
 - [ ] オペレーター初期2名をSupabase Auth + operator_profilesへ管理者が手動登録（D-010、実プロジェクト作成後に対応）
 
@@ -75,8 +75,8 @@
 
 ### FAQ投入
 - [x] FAQ.jsonを読み込む投入スクリプト作成（scripts/seed-faqs.ts）
-- [ ] OpenAI text-embedding-3-smallでFAQごとにembeddingを生成（スクリプトは実装済みだが、OPENAI_API_KEY/Supabaseプロジェクトが未整備のため未実行）
-- [ ] Supabaseのfaqsテーブルへ18件投入（is_active=trueで統一）（Supabaseプロジェクト作成後に`npm run seed:faqs`を実行）
+- [x] OpenAI text-embedding-3-smallでFAQごとにembeddingを生成（`npm run seed:faqs`実行済み）
+- [x] Supabaseのfaqsテーブルへ18件投入（is_active=trueで統一。行数18件を確認済み）
 
 ### テスト環境
 - [x] テストランナー設定（vitest、25件のテストが通過済み）
