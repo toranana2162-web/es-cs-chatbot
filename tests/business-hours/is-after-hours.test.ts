@@ -34,19 +34,27 @@ describe("isAfterHours", () => {
 
   it("business_holidaysに登録された平日は営業時間外", () => {
     const holiday = new Date("2026-06-03T00:00:00+09:00");
-    expect(isAfterHours(new Date("2026-06-03T14:00:00+09:00"), [holiday])).toBe(true);
+    expect(isAfterHours(new Date("2026-06-03T14:00:00+09:00"), [holiday])).toBe(
+      true,
+    );
   });
 
   it("business_holidaysに登録されていない平日は通常どおり判定する", () => {
     const holiday = new Date("2026-06-03T00:00:00+09:00");
-    expect(isAfterHours(new Date("2026-06-02T14:00:00+09:00"), [holiday])).toBe(false);
+    expect(isAfterHours(new Date("2026-06-02T14:00:00+09:00"), [holiday])).toBe(
+      false,
+    );
   });
 
   it("business_contextのbusiness_hoursサンプルは営業時間内", () => {
-    expect(isAfterHours(resolveBusinessContextToNow("business_hours"), [])).toBe(false);
+    expect(
+      isAfterHours(resolveBusinessContextToNow("business_hours"), []),
+    ).toBe(false);
   });
 
   it("business_contextのafter_hoursサンプルは営業時間外", () => {
-    expect(isAfterHours(resolveBusinessContextToNow("after_hours"), [])).toBe(true);
+    expect(isAfterHours(resolveBusinessContextToNow("after_hours"), [])).toBe(
+      true,
+    );
   });
 });

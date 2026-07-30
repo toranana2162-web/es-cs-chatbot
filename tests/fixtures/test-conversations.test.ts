@@ -8,7 +8,13 @@ const VALID_STATUSES = [
   "operator_handling",
   "closed",
 ];
-const VALID_CATEGORIES = ["inventory", "product", "shipping", "return", "other"];
+const VALID_CATEGORIES = [
+  "inventory",
+  "product",
+  "shipping",
+  "return",
+  "other",
+];
 const VALID_ESCALATION_REASONS = [
   "customer_request",
   "faq_not_found",
@@ -46,7 +52,9 @@ describe("test-conversations.json", () => {
       }
       expect(VALID_STATUSES).toContain(scenario.expected.status);
       if (scenario.expected.escalated_reason !== null) {
-        expect(VALID_ESCALATION_REASONS).toContain(scenario.expected.escalated_reason);
+        expect(VALID_ESCALATION_REASONS).toContain(
+          scenario.expected.escalated_reason,
+        );
       }
 
       // FR-06: エスカレーション時はescalated_reasonを保存する

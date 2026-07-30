@@ -1,19 +1,12 @@
 // ARCHITECTURE.md §5 共通型。DBスキーマ・RLS同様、mainブランチで確定し独断で変更しない。
 
 export type ConversationStatus =
-  | "ai_handling"
-  | "waiting_operator"
-  | "operator_handling"
-  | "closed";
+  "ai_handling" | "waiting_operator" | "operator_handling" | "closed";
 
 export type SenderType = "customer" | "ai" | "operator" | "system";
 
 export type ConversationCategory =
-  | "inventory"
-  | "product"
-  | "shipping"
-  | "return"
-  | "other";
+  "inventory" | "product" | "shipping" | "return" | "other";
 
 // D-012: escalated_reasonは自由入力ではなく固定コード値のみを許可する
 export type EscalationReason =

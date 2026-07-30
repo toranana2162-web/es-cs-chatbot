@@ -40,7 +40,9 @@ export function isAfterHours(now: Date, holidays: Date[]): boolean {
     return true;
   }
 
-  const holidayKeys = new Set(holidays.map((holiday) => getJstParts(holiday).dateKey));
+  const holidayKeys = new Set(
+    holidays.map((holiday) => getJstParts(holiday).dateKey),
+  );
   if (holidayKeys.has(dateKey)) {
     return true;
   }
@@ -49,5 +51,7 @@ export function isAfterHours(now: Date, holidays: Date[]): boolean {
   const startMinutes = BUSINESS_START_HOUR * 60;
   const endMinutes = BUSINESS_END_HOUR * 60;
 
-  return minutesSinceMidnight < startMinutes || minutesSinceMidnight >= endMinutes;
+  return (
+    minutesSinceMidnight < startMinutes || minutesSinceMidnight >= endMinutes
+  );
 }

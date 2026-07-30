@@ -17,5 +17,7 @@ export async function getBusinessHolidays(): Promise<Date[]> {
     throw new Error(`Failed to fetch business_holidays: ${error.message}`);
   }
 
-  return (data ?? []).map((row) => new Date(`${row.holiday_date}T00:00:00+09:00`));
+  return (data ?? []).map(
+    (row) => new Date(`${row.holiday_date}T00:00:00+09:00`),
+  );
 }
