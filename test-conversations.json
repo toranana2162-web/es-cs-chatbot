@@ -1,0 +1,266 @@
+[
+  {
+    "id": "scenario-01",
+    "type": "integration",
+    "name": "FAQ自動応答",
+    "business_context": "business_hours",
+    "input": [
+      {
+        "sender": "customer",
+        "message": "送料はいくらですか？"
+      }
+    ],
+    "expected": {
+      "category": "shipping",
+      "escalate": false,
+      "status": "ai_handling",
+      "escalated_reason": null,
+      "is_after_hours": false,
+      "notes": "関連する送料FAQを検索し、FAQに基づく回答をmessagesへ保存して顧客画面へ表示すること"
+    }
+  },
+  {
+    "id": "scenario-02",
+    "type": "integration",
+    "name": "在庫質問",
+    "business_context": "business_hours",
+    "input": [
+      {
+        "sender": "customer",
+        "message": "この商品の在庫はまだありますか？"
+      }
+    ],
+    "expected": {
+      "category": "inventory",
+      "escalate": true,
+      "status": "waiting_operator",
+      "escalated_reason": "order_specific",
+      "is_after_hours": false,
+      "notes": "在庫に関する一般案内はFAQから回答するが、Shopify APIを使用しないため個別商品の在庫確認は人間へ引き継ぐこと"
+    }
+  },
+  {
+    "id": "scenario-03",
+    "type": "integration",
+    "name": "返品・交換",
+    "business_context": "business_hours",
+    "input": [
+      {
+        "sender": "customer",
+        "message": "昨日届いた商品を返品したいです。"
+      }
+    ],
+    "expected": {
+      "category": "return",
+      "escalate": true,
+      "status": "waiting_operator",
+      "escalated_reason": "order_specific",
+      "is_after_hours": false,
+      "notes": "一般的な返品条件はFAQに基づいて案内し、個別注文の返品可否判断は人間へ引き継ぐこと"
+    }
+  },
+  {
+    "id": "scenario-04",
+    "type": "integration",
+    "name": "FAQにない質問",
+    "business_context": "business_hours",
+    "input": [
+      {
+        "sender": "customer",
+        "message": "海外発送は対応していますか？"
+      }
+    ],
+    "expected": {
+      "category": null,
+      "escalate": true,
+      "status": "waiting_operator",
+      "escalated_reason": "faq_not_found",
+      "is_after_hours": false,
+      "notes": "FAQに根拠がないため事実を作らず、人間へエスカレーションすること"
+    }
+  },
+  {
+    "id": "scenario-05",
+    "type": "integration",
+    "name": "クレーム",
+    "business_context": "business_hours",
+    "input": [
+      {
+        "sender": "customer",
+        "message": "注文した商品がまだ届きません。"
+      },
+      {
+        "sender": "ai",
+        "message": "ご不便をおかけして申し訳ございません。状況確認のため担当者へおつなぎします。"
+      },
+      {
+        "sender": "customer",
+        "message": "何度問い合わせても解決しないし、対応が最悪です。"
+      }
+    ],
+    "expected": {
+      "category": "shipping",
+      "escalate": true,
+      "status": "waiting_operator",
+      "escalated_reason": "complaint",
+      "is_after_hours": false,
+      "notes": "AIが長いやり取りを続けず人間対応へ切り替え、クレームとしてエスカレーション理由を保存すること"
+    }
+  },
+  {
+    "id": "scenario-06",
+    "type": "integration",
+    "name": "無関係な質問",
+    "business_context": "business_hours",
+    "input": [
+      {
+        "sender": "customer",
+        "message": "今日の東京の天気を教えてください。"
+      }
+    ],
+    "expected": {
+      "category": "other",
+      "escalate": false,
+      "status": "ai_handling",
+      "escalated_reason": null,
+      "is_after_hours": false,
+      "notes": "天気の回答を生成せず、ECサイトのサポート対象外であることを案内して会話を継続できること"
+    }
+  },
+  {
+    "id": "scenario-07",
+    "type": "integration",
+    "name": "オペレーター返信",
+    "business_context": "business_hours",
+    "input": [
+      {
+        "sender": "customer",
+        "message": "配送先住所を変更したいです。"
+      },
+      {
+        "sender": "ai",
+        "message": "発送状況の確認が必要なため、担当者へおつなぎします。"
+      },
+      {
+        "sender": "operator",
+        "message": "発送準備前でしたので、配送先住所の変更を承りました。"
+      }
+    ],
+    "expected": {
+      "category": "shipping",
+      "escalate": true,
+      "status": "operator_handling",
+      "escalated_reason": "order_specific",
+      "is_after_hours": false,
+      "notes": "管理画面からオペレーターが返信でき、返信がmessagesへ保存されて顧客画面へRealtime表示されること"
+    }
+  },
+  {
+    "id": "scenario-08",
+    "type": "integration",
+    "name": "営業時間外",
+    "business_context": "after_hours",
+    "input": [
+      {
+        "sender": "customer",
+        "message": "届いた商品を返品したいです。担当者に確認してもらえますか？"
+      }
+    ],
+    "expected": {
+      "category": "return",
+      "escalate": true,
+      "status": "waiting_operator",
+      "escalated_reason": "customer_request",
+      "is_after_hours": true,
+      "notes": "business_contextをafter_hoursとしてテストを実行すること（実装側は現在時刻ではなくテストから注入された時刻/フラグでafter_hours判定を行う）。AIは一般的な返品条件を案内し、人間対応が必要なため翌営業日に対応する旨を顧客へ表示すること"
+    }
+  },
+  {
+    "id": "scenario-09",
+    "type": "integration",
+    "name": "Claude API障害",
+    "business_context": "business_hours",
+    "input": [
+      {
+        "sender": "customer",
+        "message": "送料はいくらですか？"
+      }
+    ],
+    "expected": {
+      "category": null,
+      "escalate": true,
+      "status": "waiting_operator",
+      "escalated_reason": "ai_api_error",
+      "is_after_hours": false,
+      "notes": "Claude APIを意図的に失敗させること。顧客メッセージを保存し、一時的に自動回答できない旨を表示すること。APIキーや秘密情報をログへ出力しないこと"
+    }
+  },
+  {
+    "id": "scenario-10",
+    "type": "integration",
+    "name": "オペレーター同時担当",
+    "business_context": "business_hours",
+    "precondition": {
+      "input": [
+        {
+          "sender": "customer",
+          "message": "個別に確認してほしいことがあります。"
+        }
+      ],
+      "status_before": "waiting_operator",
+      "assigned_operator_id_before": null
+    },
+    "concurrent_actions": [
+      { "actor": "operator_a", "action": "claim" },
+      { "actor": "operator_b", "action": "claim" }
+    ],
+    "expected": {
+      "category": "other",
+      "escalate": true,
+      "status": "operator_handling",
+      "escalated_reason": "customer_request",
+      "is_after_hours": false,
+      "notes": "concurrent_actionsの2件はテスト実装でPromise.all等により並列実行すること（JSON内の記載順序は実行順序を意味しない）。assigned_operator_idがNULLの場合のみ成功する原子的更新により、最初に成功した1名だけがassigned_operator_idへ設定され、statusがoperator_handlingへ変わること。もう1名には既に担当者が決定していることを表示し、担当者情報を上書きしないこと"
+    }
+  },
+  {
+    "id": "scenario-11",
+    "type": "integration",
+    "name": "営業時間外の待機案件",
+    "business_context": "after_hours",
+    "input": [
+      {
+        "sender": "customer",
+        "message": "注文後に配送先を間違えたことに気づきました。住所を変更してください。"
+      }
+    ],
+    "expected": {
+      "category": "shipping",
+      "escalate": true,
+      "status": "waiting_operator",
+      "escalated_reason": "order_specific",
+      "is_after_hours": true,
+      "notes": "business_contextをafter_hoursとしてテストを実行すること。顧客へ翌営業日の対応であることを表示し、管理画面で営業時間外案件（is_after_hours=true）として判別できること"
+    }
+  },
+  {
+    "id": "scenario-12",
+    "type": "integration",
+    "name": "サポート対象外の質問",
+    "business_context": "business_hours",
+    "input": [
+      {
+        "sender": "customer",
+        "message": "今日の日経平均株価を教えてください。"
+      }
+    ],
+    "expected": {
+      "category": "other",
+      "escalate": false,
+      "status": "ai_handling",
+      "escalated_reason": null,
+      "is_after_hours": false,
+      "notes": "株価や一般知識の回答を生成せず、サポート対象外であることを案内すること。原則としてオペレーターへエスカレーションせず、会話を継続できること"
+    }
+  }
+]

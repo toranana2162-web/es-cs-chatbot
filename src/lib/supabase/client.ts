@@ -1,0 +1,12 @@
+import { createBrowserClient } from "@supabase/ssr";
+
+/**
+ * ブラウザ（クライアントコンポーネント）用Supabaseクライアント。
+ * anon keyのみを使用し、アクセス制御はRLSに委ねる（SECURITY.md §4）。
+ */
+export function createClient() {
+  return createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
+}
