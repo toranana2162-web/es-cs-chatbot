@@ -83,7 +83,7 @@
 - [x] test-conversations.jsonを読み込む統合テストハーネス作成（tests/fixtures/）
 - [x] business_context（business_hours/after_hours）をisAfterHoursのnow引数へ変換するテストユーティリティ実装（tests/helpers/business-context.ts）
 
-## Phase 2 顧客チャットUI
+## Phase 2 顧客チャットUI（feature/customer-widget、コミットc60971c）
 - [x] ウィジェット外観（src/components/widget/ChatWidget.tsx、ChatPanel.tsx、右下固定表示）
 - [x] 開閉ボタン（ChatButton.tsx、開閉でアイコン切替）
 - [x] メッセージ一覧（MessageList.tsx、MessageBubble.tsx、送信者ラベル表示）
@@ -93,7 +93,12 @@
 - [x] ステータス表示（StatusBanner.tsx、ai_handling/waiting_operator/operator_handling/closedの日本語ラベル）
 - [x] Realtime購読（use-conversation.ts、fetch後にpostgres_changesでmessages INSERT・conversations UPDATEを購読）
 - [x] エラー表示（セッション確立失敗・送信失敗時のインラインエラーメッセージ）
-- [x] レスポンシブ対応（w-[min(360px,90vw)]で375px幅でも収まることをPlaywrightで確認）
+- [x] レスポンシブ対応（w-[min(360px,90vw)]・高さ70vh/sm:32remで375px幅でも収まることをPlaywrightで確認）
+
+備考: AI応答の生成（Claude API呼び出し）はPhase 3側の責務のため、現時点では顧客が
+送ったメッセージはmessagesへ保存されるのみでAI返信は届かない（Phase 5で統合予定）。
+Playwrightでdevサーバー・本番Supabaseに対する対話的な動作確認（匿名認証→会話作成→
+メッセージ送信→ステータス表示）を実施済み。
 
 ## Phase 3 AIバックエンド
 - [ ] FAQ Embedding生成
