@@ -22,78 +22,83 @@
 ## Phase 1 共通基盤
 
 ### プロジェクト初期化
-- [ ] Next.js（App Router）+ TypeScriptで初期化
-- [ ] Tailwind CSS導入
-- [ ] ESLint・Prettier設定
-- [ ] package.json / tsconfig.json確定（mainブランチ確定物、WORKTREE_PLAN.md）
-- [ ] ARCHITECTURE.md §6の推奨ディレクトリでsrc/以下を作成
+- [x] Next.js（App Router）+ TypeScriptで初期化
+- [x] Tailwind CSS導入
+- [x] ESLint・Prettier設定
+- [x] package.json / tsconfig.json確定（mainブランチ確定物、WORKTREE_PLAN.md）
+- [x] ARCHITECTURE.md §6の推奨ディレクトリでsrc/以下を作成
 
 ### Supabase接続・環境変数
-- [ ] Supabaseプロジェクト作成
-- [ ] .env.example作成（ANTHROPIC_API_KEY / SUPABASE_URL / SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEYのキー名のみ記載）
-- [ ] .env.localを.gitignoreへ追加し、Git管理対象から除外
-- [ ] src/lib/supabase/にクライアント用（anon key）とサーバー用（service role key）のSupabaseクライアントを分離して実装
+- [x] Supabaseプロジェクト作成（CS-chatbot-project、project ref: wdocnpmvoneobaoxnlbv、リンク済み）
+- [x] .env.example作成（ANTHROPIC_API_KEY / SUPABASE_URL / SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY / OPENAI_API_KEYのキー名のみ記載）
+- [x] .env.localを.gitignoreへ追加し、Git管理対象から除外
+- [x] src/lib/supabase/にクライアント用（anon key）とサーバー用（service role key）のSupabaseクライアントを分離して実装
 
 ### DBスキーマ・マイグレーション（supabase/migrations）
-- [ ] conversationsテーブル作成（id, customer_user_id, status, category, assigned_operator_id, escalated_reason, last_message_at, created_at, updated_at, is_after_hours, escalated_at, claimed_at）
-- [ ] messagesテーブル作成（id, conversation_id, sender_type, sender_id, content, metadata, created_at）
-- [ ] faqsテーブル作成（id, category, question, answer, embedding vector(1536), is_active, created_at, updated_at）
-- [ ] operator_profilesテーブル作成（user_id, display_name, role, is_active, created_at）
-- [ ] business_holidaysテーブル作成（id, holiday_date, holiday_name, created_at）
-- [ ] CHECK制約: conversations.status / conversations.category / conversations.escalated_reason（NULL許容）/ messages.sender_type
-- [ ] UNIQUE制約: business_holidays.holiday_date
-- [ ] 外部キー制約: messages.conversation_id→conversations.id、conversations.assigned_operator_id→operator_profiles.user_id
-- [ ] インデックス作成: conversations(status, last_message_at desc) / conversations(customer_user_id) / conversations(assigned_operator_id) / messages(conversation_id, created_at) / faqs(category) / faqs embeddingベクトルインデックス / business_holidays(holiday_date)
-- [ ] オペレーター担当開始の原子的更新処理（assigned_operator_idがNULLの場合のみ成功するUPDATE、D-008）
-- [ ] 本番適用前にテスト環境で動作確認
+- [x] conversationsテーブル作成（id, customer_user_id, status, category, assigned_operator_id, escalated_reason, last_message_at, created_at, updated_at, is_after_hours, escalated_at, claimed_at）
+- [x] messagesテーブル作成（id, conversation_id, sender_type, sender_id, content, metadata, created_at）
+- [x] faqsテーブル作成（id, category, question, answer, embedding vector(1536), is_active, created_at, updated_at）
+- [x] operator_profilesテーブル作成（user_id, display_name, role, is_active, created_at）
+- [x] business_holidaysテーブル作成（id, holiday_date, holiday_name, created_at）
+- [x] CHECK制約: conversations.status / conversations.category / conversations.escalated_reason（NULL許容）/ messages.sender_type
+- [x] UNIQUE制約: business_holidays.holiday_date
+- [x] 外部キー制約: messages.conversation_id→conversations.id、conversations.assigned_operator_id→operator_profiles.user_id
+- [x] インデックス作成: conversations(status, last_message_at desc) / conversations(customer_user_id) / conversations(assigned_operator_id) / messages(conversation_id, created_at) / faqs(category) / faqs embeddingベクトルインデックス / business_holidays(holiday_date)
+- [x] オペレーター担当開始の原子的更新処理（assigned_operator_idがNULLの場合のみ成功するUPDATE、D-008、claim_conversation関数として実装）
+- [x] 本番適用前にテスト環境で動作確認（`supabase db push`で実プロジェクト（CS-chatbot-project）へ適用済み。5テーブル・claim_conversation RPCの到達性を確認。ただし専用のステージング環境は別途用意しておらず、今回適用した先が唯一のSupabaseプロジェクト）
 
 ### RLSポリシー
-- [ ] conversations: 顧客はcustomer_user_id=auth.uid()の行のみSELECT・自分の会話のみINSERT
-- [ ] conversations: オペレーターはoperator_profiles登録済みの場合のみ全件SELECT、担当割当・状態変更を許可
-- [ ] messages: 顧客は自分のconversationに属するmessageのみSELECT、sender_type=customerかつsender_id=auth.uid()としてのみINSERT
-- [ ] messages: オペレーターは全件SELECT、sender_type=operatorとしてINSERT
-- [ ] faqs: 顧客からの直接SELECTを禁止し、サーバー処理経由のみアクセス可能にする
-- [ ] 全テーブルでRLSが有効化されていることを確認
+- [x] conversations: 顧客はcustomer_user_id=auth.uid()の行のみSELECT・自分の会話のみINSERT
+- [x] conversations: オペレーターはoperator_profiles登録済みの場合のみ全件SELECT、担当割当・状態変更を許可
+- [x] messages: 顧客は自分のconversationに属するmessageのみSELECT、sender_type=customerかつsender_id=auth.uid()としてのみINSERT
+- [x] messages: オペレーターは全件SELECT、sender_type=operatorとしてINSERT
+- [x] faqs: 顧客からの直接SELECTを禁止し、サーバー処理経由のみアクセス可能にする
+- [x] 全テーブルでRLSが有効化されていることを確認
 
 ### 認証
-- [ ] Supabase匿名認証を有効化（顧客識別、D-003）
-- [ ] オペレーター認証（Supabase Auth）とoperator_profilesの紐付け、role（operator/admin）確認処理
-- [ ] オペレーター初期2名をSupabase Auth + operator_profilesへ管理者が手動登録（D-010）
+- [x] Supabase匿名認証を有効化（D-003、`auth.signInAnonymously()`が成功することを確認済み）
+- [x] オペレーター認証（Supabase Auth）とoperator_profilesの紐付け、role（operator/admin）確認処理（DB側is_operator()関数＋src/lib/auth/get-current-operator.tsを実装。ログイン画面UI自体はPhase 4）
+- [x] オペレーター初期2名をSupabase Auth + operator_profilesへ管理者が手動登録（D-010、模擬案件のためダミーアドレスで登録。operator1@example.com=admin、operator2@example.com=operator。`npm run register:operator`で再現可能）
 
 ### 共通TypeScript型
-- [ ] src/types/domain.tsにConversationStatus / SenderType / ConversationCategory / EscalationReasonを定義（ARCHITECTURE.md §5）
+- [x] src/types/domain.tsにConversationStatus / SenderType / ConversationCategory / EscalationReasonを定義（ARCHITECTURE.md §5）
 
 ### 営業時間ロジック
-- [ ] isAfterHours(now, holidays)を純粋関数として実装する（D-013、現在時刻を関数内部で取得しない）
-- [ ] business_holidaysテーブルから休業日一覧を取得するユーティリティ実装
+- [x] isAfterHours(now, holidays)を純粋関数として実装する（D-013、現在時刻を関数内部で取得しない）
+- [x] business_holidaysテーブルから休業日一覧を取得するユーティリティ実装
 
 ### 入力検証・レート制限
-- [ ] サーバー側で最大1,000文字の入力検証
-- [ ] 空文字・空白のみのメッセージを拒否
-- [ ] HTMLエスケープ、scriptタグ無効化
-- [ ] 顧客メッセージのレート制限（1分10回、超過時HTTP 429相当を返却）
+- [x] サーバー側で最大1,000文字の入力検証
+- [x] 空文字・空白のみのメッセージを拒否
+- [x] HTMLエスケープ、scriptタグ無効化
+- [x] 顧客メッセージのレート制限（1分10回、超過時HTTP 429相当を返却）
 
 ### FAQ投入
-- [ ] FAQ.jsonを読み込む投入スクリプト作成
-- [ ] OpenAI text-embedding-3-smallでFAQごとにembeddingを生成
-- [ ] Supabaseのfaqsテーブルへ18件投入（is_active=trueで統一）
+- [x] FAQ.jsonを読み込む投入スクリプト作成（scripts/seed-faqs.ts）
+- [x] OpenAI text-embedding-3-smallでFAQごとにembeddingを生成（`npm run seed:faqs`実行済み）
+- [x] Supabaseのfaqsテーブルへ18件投入（is_active=trueで統一。行数18件を確認済み）
 
 ### テスト環境
-- [ ] テストランナー設定（vitest等）
-- [ ] test-conversations.jsonを読み込む統合テストハーネス作成
-- [ ] business_context（business_hours/after_hours）をisAfterHoursのnow引数へ変換するテストユーティリティ実装
+- [x] テストランナー設定（vitest、25件のテストが通過済み）
+- [x] test-conversations.jsonを読み込む統合テストハーネス作成（tests/fixtures/）
+- [x] business_context（business_hours/after_hours）をisAfterHoursのnow引数へ変換するテストユーティリティ実装（tests/helpers/business-context.ts）
 
-## Phase 2 顧客チャットUI
-- [ ] ウィジェット外観
-- [ ] 開閉ボタン
-- [ ] メッセージ一覧
-- [ ] 入力フォーム
-- [ ] メッセージ送信
-- [ ] ローディング表示
-- [ ] ステータス表示
-- [ ] Realtime購読
-- [ ] エラー表示
-- [ ] レスポンシブ対応
+## Phase 2 顧客チャットUI（feature/customer-widget、コミットc60971c）
+- [x] ウィジェット外観（src/components/widget/ChatWidget.tsx、ChatPanel.tsx、右下固定表示）
+- [x] 開閉ボタン（ChatButton.tsx、開閉でアイコン切替）
+- [x] メッセージ一覧（MessageList.tsx、MessageBubble.tsx、送信者ラベル表示）
+- [x] 入力フォーム（MessageInput.tsx、1,000文字上限、Enter送信・Shift+Enter改行）
+- [x] メッセージ送信（src/actions/send-customer-message.ts、Server Actionで顧客セッションからconversations/messagesへ書き込み）
+- [x] ローディング表示（初期化中・メッセージ取得中の「読み込み中...」表示）
+- [x] ステータス表示（StatusBanner.tsx、ai_handling/waiting_operator/operator_handling/closedの日本語ラベル）
+- [x] Realtime購読（use-conversation.ts、fetch後にpostgres_changesでmessages INSERT・conversations UPDATEを購読）
+- [x] エラー表示（セッション確立失敗・送信失敗時のインラインエラーメッセージ）
+- [x] レスポンシブ対応（w-[min(360px,90vw)]・高さ70vh/sm:32remで375px幅でも収まることをPlaywrightで確認）
+
+備考: AI応答の生成（Claude API呼び出し）はPhase 3側の責務のため、現時点では顧客が
+送ったメッセージはmessagesへ保存されるのみでAI返信は届かない（Phase 5で統合予定）。
+Playwrightでdevサーバー・本番Supabaseに対する対話的な動作確認（匿名認証→会話作成→
+メッセージ送信→ステータス表示）を実施済み。
 
 ## Phase 3 AIバックエンド
 - [ ] FAQ Embedding生成

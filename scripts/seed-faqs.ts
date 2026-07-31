@@ -37,7 +37,9 @@ async function main() {
     });
 
     if (error) {
-      throw new Error(`Failed to insert FAQ "${faq.question}": ${error.message}`);
+      throw new Error(
+        `Failed to insert FAQ "${faq.question}": ${error.message}`,
+      );
     }
 
     console.log(`Inserted: [${faq.category}] ${faq.question}`);

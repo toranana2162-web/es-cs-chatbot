@@ -37,6 +37,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# supabase CLI local cache（DB接続文字列を含むため必ず除外する）
+supabase/.temp/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

@@ -17,7 +17,9 @@ export async function assertWithinRateLimit(
   now: Date,
 ): Promise<void> {
   const supabase = createAdminClient();
-  const windowStart = new Date(now.getTime() - RATE_LIMIT_WINDOW_MS).toISOString();
+  const windowStart = new Date(
+    now.getTime() - RATE_LIMIT_WINDOW_MS,
+  ).toISOString();
 
   const { count, error } = await supabase
     .from("messages")
