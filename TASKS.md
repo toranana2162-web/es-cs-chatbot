@@ -84,16 +84,16 @@
 - [x] business_context（business_hours/after_hours）をisAfterHoursのnow引数へ変換するテストユーティリティ実装（tests/helpers/business-context.ts）
 
 ## Phase 2 顧客チャットUI
-- [ ] ウィジェット外観
-- [ ] 開閉ボタン
-- [ ] メッセージ一覧
-- [ ] 入力フォーム
-- [ ] メッセージ送信
-- [ ] ローディング表示
-- [ ] ステータス表示
-- [ ] Realtime購読
-- [ ] エラー表示
-- [ ] レスポンシブ対応
+- [x] ウィジェット外観（src/components/widget/ChatWidget.tsx、ChatPanel.tsx、右下固定表示）
+- [x] 開閉ボタン（ChatButton.tsx、開閉でアイコン切替）
+- [x] メッセージ一覧（MessageList.tsx、MessageBubble.tsx、送信者ラベル表示）
+- [x] 入力フォーム（MessageInput.tsx、1,000文字上限、Enter送信・Shift+Enter改行）
+- [x] メッセージ送信（src/actions/send-customer-message.ts、Server Actionで顧客セッションからconversations/messagesへ書き込み）
+- [x] ローディング表示（初期化中・メッセージ取得中の「読み込み中...」表示）
+- [x] ステータス表示（StatusBanner.tsx、ai_handling/waiting_operator/operator_handling/closedの日本語ラベル）
+- [x] Realtime購読（use-conversation.ts、fetch後にpostgres_changesでmessages INSERT・conversations UPDATEを購読）
+- [x] エラー表示（セッション確立失敗・送信失敗時のインラインエラーメッセージ）
+- [x] レスポンシブ対応（w-[min(360px,90vw)]で375px幅でも収まることをPlaywrightで確認）
 
 ## Phase 3 AIバックエンド
 - [ ] FAQ Embedding生成

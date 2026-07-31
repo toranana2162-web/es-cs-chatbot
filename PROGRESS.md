@@ -8,7 +8,7 @@
 - 提案承認
 - 要件定義・設計作成完了（Phase 0）
 - 共通基盤実装完了（Phase 1、外部手続き含めて完了）
-- Worktree作成済み、各領域の実装前で一旦区切り
+- feature/customer-widgetでPhase 2（顧客チャットUI）実装完了
 
 ## 開発ログ
 
@@ -41,8 +41,17 @@
 - `getCurrentOperator()`ヘルパー（src/lib/auth/）を追加
 - Phase 1の全タスクが完了し、実装を一旦区切り
 
+### 2026-08-01
+- feature/customer-widgetでPhase 2（顧客チャットUI）を実装
+  - ChatWidget/ChatButton/ChatPanel/MessageList/MessageBubble/MessageInput/StatusBanner一式
+  - use-conversation.tsフック：匿名認証、会話取得、fetch後にRealtime購読（取りこぼし防止のためfetch→subscribeの順序を固定）
+  - src/actions/send-customer-message.ts：顧客セッションでconversations/messages書き込み、既存の入力検証・レート制限を利用（AI応答生成はPhase 5で統合、ここでは行わない）
+  - /widget-preview（src/app/widget-preview/page.tsx）でウィジェット単体を確認できるプレビューページを追加
+  - vitest 43件通過、tsc/eslintエラーなし
+  - Playwrightで実際にdevサーバー・本番Supabaseに対して動作確認（匿名認証→会話作成→メッセージ送信→AI対応中ステータス表示、375px幅でのレイアウト崩れなしを確認）
+
 ## 次の作業
-1. 各Worktreeで担当領域の実装に着手（Phase 2〜4）
-   - feature/customer-widget: 顧客チャットUI
+1. 残りのWorktreeで担当領域の実装に着手（Phase 2〜4）
    - feature/ai-backend: AIバックエンド（FAQ類似検索RPCの実装含む）
    - feature/operator-dashboard: オペレーター管理画面（ログイン画面等）
+2. feature/customer-widgetの変更をコミットするか確認
