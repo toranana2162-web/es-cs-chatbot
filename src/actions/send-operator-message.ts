@@ -59,10 +59,8 @@ export async function sendOperatorMessage(
     return { success: false, error: "メッセージの送信に失敗しました" };
   }
 
-  await supabase
-    .from("conversations")
-    .update({ last_message_at: new Date().toISOString() })
-    .eq("id", conversationId);
+  // conversations.last_message_at/updated_atはmessages挿入トリガー
+  // （messages_touch_conversation）が自動更新するため、ここでは更新しない。
 
   revalidatePath(`/operator/conversations/${conversationId}`);
   revalidatePath("/operator");

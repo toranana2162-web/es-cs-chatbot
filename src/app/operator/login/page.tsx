@@ -1,24 +1,13 @@
 import { redirect } from "next/navigation";
 
 import { LoginForm } from "@/components/operator/LoginForm";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentOperator } from "@/lib/auth/get-current-operator";
 
 export default async function OperatorLoginPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const operator = await getCurrentOperator();
 
-  if (user) {
-    const { data: profile } = await supabase
-      .from("operator_profiles")
-      .select("user_id, is_active")
-      .eq("user_id", user.id)
-      .maybeSingle();
-
-    if (profile?.is_active) {
-      redirect("/operator");
-    }
+  if (operator) {
+    redirect("/operator");
   }
 
   return (
