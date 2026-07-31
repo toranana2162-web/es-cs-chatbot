@@ -8,7 +8,8 @@
 - 提案承認
 - 要件定義・設計作成完了（Phase 0）
 - 共通基盤実装完了（Phase 1、外部手続き含めて完了）
-- Worktree作成済み、各領域の実装前で一旦区切り
+- feature/customer-widgetでPhase 2（顧客チャットUI）実装完了
+- feature/ai-backend、feature/operator-dashboardは未着手
 
 ## 開発ログ
 
@@ -41,8 +42,23 @@
 - `getCurrentOperator()`ヘルパー（src/lib/auth/）を追加
 - Phase 1の全タスクが完了し、実装を一旦区切り
 
+### 2026-08-01
+- Phase 2（顧客チャットUI）に着手。feature/customer-widget worktreeがmainから
+  5コミット遅れていたため`git merge main`で同期し、`.env`をworktreeへ複製
+- 実装中に判明した共通基盤のギャップをmainで修正しworktreeへ同期
+  - conversations.last_message_at自動更新トリガー（顧客・オペレーターはUPDATE権限を
+    持たないため誰も更新できなかった）
+  - conversations/messagesがsupabase_realtime publicationに未登録だった
+- feature/customer-widgetでPhase 2を実装（コミットc60971c）
+  - src/actions/send-customer-message.ts（唯一のServer Action、AI応答生成は行わない）
+  - ChatWidget/ChatButton/ChatPanel/MessageList/MessageBubble/MessageInput/StatusBanner
+  - useConversation（匿名認証・会話復元・Realtime購読。fetch→subscribeの順序で
+    新規会話1通目のメッセージ取りこぼしを回避）
+  - src/app/widget-preview/ プレビューページ
+  - vitest 43件通過、lint/typecheck/build/dev起動確認済み。ブラウザでの対話的な
+    クリック確認はこのセッションでは未実施（ブラウザ拡張が未接続のため）
+
 ## 次の作業
-1. 各Worktreeで担当領域の実装に着手（Phase 2〜4）
-   - feature/customer-widget: 顧客チャットUI
-   - feature/ai-backend: AIバックエンド（FAQ類似検索RPCの実装含む）
-   - feature/operator-dashboard: オペレーター管理画面（ログイン画面等）
+1. feature/ai-backendでPhase 3（AIバックエンド）に着手
+2. feature/operator-dashboardでPhase 4（オペレーター管理画面）に着手
+3. Phase 2の対話的な動作確認（ブラウザ接続後、または手動）

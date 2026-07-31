@@ -83,17 +83,23 @@
 - [x] test-conversations.jsonを読み込む統合テストハーネス作成（tests/fixtures/）
 - [x] business_context（business_hours/after_hours）をisAfterHoursのnow引数へ変換するテストユーティリティ実装（tests/helpers/business-context.ts）
 
-## Phase 2 顧客チャットUI
-- [ ] ウィジェット外観
-- [ ] 開閉ボタン
-- [ ] メッセージ一覧
-- [ ] 入力フォーム
-- [ ] メッセージ送信
-- [ ] ローディング表示
-- [ ] ステータス表示
-- [ ] Realtime購読
-- [ ] エラー表示
-- [ ] レスポンシブ対応
+## Phase 2 顧客チャットUI（feature/customer-widget、コミットc60971c）
+- [x] ウィジェット外観
+- [x] 開閉ボタン
+- [x] メッセージ一覧
+- [x] 入力フォーム
+- [x] メッセージ送信
+- [x] ローディング表示
+- [x] ステータス表示
+- [x] Realtime購読
+- [x] エラー表示
+- [x] レスポンシブ対応（幅min(360px,90vw)・高さ70vh/sm:32rem で調整）
+
+備考: AI応答の生成（Claude API呼び出し）はPhase 3側の責務のため、現時点では顧客が
+送ったメッセージはmessagesへ保存されるのみでAI返信は届かない（Phase 5で統合予定）。
+ブラウザでのクリック操作による対話的な動作確認は、このセッションではブラウザ
+自動化ツールが未接続のため実施できていない（vitest 43件・lint・typecheck・build・
+dev起動時のHTTP 200レンダリングは確認済み）。
 
 ## Phase 3 AIバックエンド
 - [ ] FAQ Embedding生成
