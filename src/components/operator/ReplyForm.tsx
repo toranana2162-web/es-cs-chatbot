@@ -38,6 +38,7 @@ export function ReplyForm({ conversationId }: { conversationId: string }) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-2">
       <textarea
+        aria-label="返信を入力"
         value={content}
         onChange={(event) => setContent(event.target.value)}
         rows={3}
@@ -45,7 +46,9 @@ export function ReplyForm({ conversationId }: { conversationId: string }) {
         className="w-full resize-none rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
       />
       <div className="flex items-center justify-between">
-        <span className={`text-xs ${isTooLong ? "text-rose-600" : "text-zinc-400"}`}>
+        <span
+          className={`text-xs ${isTooLong ? "text-rose-600" : "text-zinc-400"}`}
+        >
           {content.length} / {MAX_MESSAGE_LENGTH}
         </span>
         <button

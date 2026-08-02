@@ -37,9 +37,16 @@ export function MessageInput({
       className="flex items-end gap-2 border-t border-gray-200 p-3"
     >
       <textarea
+        aria-label="メッセージを入力"
         value={value}
         onChange={(event) => setValue(event.target.value)}
         onKeyDown={(event) => {
+          // 日本語入力（IME）で変換候補を確定するEnterキーも拾ってしまうと、
+          // 変換確定しただけで未完成のメッセージを送信してしまう。
+          // isComposing（一部ブラウザではkeyCode 229）で変換中は送信しない。
+          if (event.nativeEvent.isComposing || event.keyCode === 229) {
+            return;
+          }
           if (event.key === "Enter" && !event.shiftKey) {
             event.preventDefault();
             handleSubmit(event);
