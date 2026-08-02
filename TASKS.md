@@ -123,26 +123,33 @@ test-conversations.jsonのシナリオ1〜6・8・9・12を流す統合テスト
 この検証で実際の不具合を2件発見・修正済み（詳細はコミットメッセージ参照）。
 feature/ai-backendはmainへマージ済み（48b99e1）。
 
-## Phase 4 オペレーター管理画面
-- [ ] ログイン画面
-- [ ] 会話一覧
-- [ ] 状態フィルタ
-- [ ] カテゴリ表示
-- [ ] 会話詳細
-- [ ] 担当開始
-- [ ] オペレーター返信
-- [ ] 会話完了
-- [ ] Realtime購読
-- [ ] 未読表示
+## Phase 4 オペレーター管理画面（feature/operator-dashboard、mainへマージ済み）
+- [x] ログイン画面（src/app/operator/login/、LoginForm.tsx、requireOperatorでガード）
+- [x] 会話一覧（ConversationList.tsx、src/features/conversations/list-conversations.ts）
+- [x] 状態フィルタ（StatusFilter.tsx）
+- [x] カテゴリ表示（CategoryBadge.tsx）
+- [x] 会話詳細（ConversationDetail.tsx）
+- [x] 担当開始（ClaimButton.tsx、claim-conversation.ts、claim_conversation RPC経由でD-008を担保）
+- [x] オペレーター返信（ReplyForm.tsx、send-operator-message.ts、operator_handling以外・他人の担当会話には返信不可）
+- [x] 会話完了（CloseButton.tsx、close-conversation.ts、担当オペレーター本人のみ）
+- [x] Realtime購読（RealtimeRefresher.tsx）
+- [x] 未読表示（ConversationList.tsxのunreadインジケータ）
+
+備考: is_after_hours・escalated_reason（D-012の8種を日本語ラベル化）もConversationDetail.tsx/
+ConversationList.tsxで表示済み。AIバックエンドが設定する値とコードレビューで整合を確認した
+（Phase 5、2026-08-03）。
 
 ## Phase 5 統合
-- [ ] AI回答フロー
-- [ ] エスカレーションフロー
-- [ ] オペレーター返信フロー
-- [ ] 営業時間外フロー
-- [ ] RLS検証
-- [ ] エラー処理
+- [x] AI回答フロー（send-customer-message.tsからrespondWithAiを呼び出すよう配線。コミットaa41f3d）
+- [x] エスカレーションフロー（コードレビューで確認: claim-conversation.ts/ConversationDetail.tsxがrespond-with-ai.tsの出力するstatus/escalated_reasonと整合。追加実装は不要だった）
+- [ ] オペレーター返信フロー（コードは実装済み・レビュー済みだが、実際に担当開始→返信→顧客側へRealtime到達までの通しの動作確認は未実施）
+- [x] 営業時間外フロー（コードレビューで確認済み。is_after_hoursの設定・表示側は既に整合。UIでの目視確認は未実施）
+- [ ] RLS検証（匿名認証→自分の会話へのRLS経由insert/readは統合テストで確認済み。顧客Aが顧客Bの会話を読めないこと等、SECURITY.md §8のフルチェックは未実施）
+- [ ] エラー処理（Phase 2/3/4個別のエラー処理は実装済み。統合後の見直しは未実施）
 - [ ] UI調整
+
+備考: 匿名認証→RLS経由のメッセージ挿入→respondWithAi→AIメッセージ保存という一連の流れを
+実際のSupabaseプロジェクト・Claude APIに対する統合テストで確認済み（コミットaa41f3d）。
 
 ## Phase 6 納品
 - [ ] Vercelデプロイ

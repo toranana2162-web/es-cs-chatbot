@@ -83,9 +83,20 @@
 - マージ後、npm install・typecheck・lint・vitest（65件、実際のClaude/Supabase呼び出しを
   含む統合テスト10件含む）・buildをすべて再確認し、問題なし
 - これでPhase 2・3・4がすべてmainへマージ済みとなった
+- Phase 5（統合）に着手
+  - send-customer-message.tsからrespondWithAiを呼び出すよう配線（コミットaa41f3d）。
+    respondWithAiはai_handling以外の会話には何もしないため常に呼んでよく、失敗しても
+    顧客メッセージ自体は保存済みのため成功として返す
+  - オペレーター管理画面側（claim-conversation.ts、send-operator-message.ts、
+    ConversationDetail.tsx等）をコードレビューし、AIバックエンドが設定するstatus/
+    escalated_reason/is_after_hoursと既に整合していることを確認。エスカレーション
+    フロー・営業時間外フローの追加実装は不要だった
+  - 匿名認証→RLS経由のメッセージ挿入→respondWithAi→AIメッセージ保存という一連の
+    流れを実際のSupabaseプロジェクト・Claude APIに対する統合テストで検証し成功
+  - TASKS.mdのPhase 4チェックリストが実装済みにもかかわらず未チェックのままだった
+    ことに気づき、あわせて修正した
+- Phase 2・3の作業を一区切りとして報告済み。Phase 5は途中（下記「次の作業」参照）
 
 ## 次の作業
-1. Phase 5（統合）: AI回答フロー・エスカレーションフロー・オペレーター返信フロー・
-   営業時間外フロー・RLS検証・エラー処理・UI調整
-   （顧客UIからrespond-with-aiを呼び出す配線が未実装。現状は顧客がメッセージを送っても
-   AI応答が届かない。これがPhase 5の中心作業になる見込み）
+1. Phase 5の残り: オペレーター返信フローの通し動作確認、RLS検証（SECURITY.md §8の
+   フルチェック: 顧客Aが顧客Bの会話を読めないこと等）、エラー処理の統合後見直し、UI調整
