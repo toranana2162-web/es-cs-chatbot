@@ -100,7 +100,7 @@
 Playwrightでdevサーバー・本番Supabaseに対する対話的な動作確認（匿名認証→会話作成→
 メッセージ送信→ステータス表示）を実施済み。
 
-## Phase 3 AIバックエンド（feature/ai-backend、コミットd5fd3c2、mainへ未マージ）
+## Phase 3 AIバックエンド（feature/ai-backend、コミットd5fd3c2、mainへマージ済み48b99e1）
 - [x] FAQ Embedding生成（src/features/faq/embed-query.ts、OpenAI text-embedding-3-small）
 - [x] FAQ類似検索（src/features/faq/search-faqs.ts、match_faqs RPC、閾値0.75）
 - [x] Claude API接続（src/features/ai/claude-client.ts、Claude Sonnet 5、D-014）
@@ -121,7 +121,7 @@ Playwrightでdevサーバー・本番Supabaseに対する対話的な動作確�
 test-conversations.jsonのシナリオ1〜6・8・9・12を流す統合テスト10件を実施し全て成功。
 シナリオ7・10はAIバックエンド単体の対象外（オペレーター返信・同時担当はPhase 5/4の領域）。
 この検証で実際の不具合を2件発見・修正済み（詳細はコミットメッセージ参照）。
-feature/ai-backendはまだmainへマージしていない。
+feature/ai-backendはmainへマージ済み（48b99e1）。
 
 ## Phase 4 オペレーター管理画面
 - [ ] ログイン画面

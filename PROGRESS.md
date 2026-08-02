@@ -10,7 +10,8 @@
 - 共通基盤実装完了（Phase 1、外部手続き含めて完了）
 - Phase 2（顧客チャットUI）実装完了、mainへマージ済み
 - Phase 4（オペレーター管理画面）実装完了、mainへマージ済み
-- Phase 3（AIバックエンド）実装完了。feature/ai-backendブランチ、mainへ未マージ
+- Phase 3（AIバックエンド）実装完了、mainへマージ済み
+- Phase 2・3・4すべてmainへマージ済み
 - Phase 5（統合）が未着手
 
 ## 開発ログ
@@ -63,7 +64,7 @@
 - feature/customer-widgetをmainへマージ（本コミット）
 - feature/operator-dashboardでPhase 4（オペレーター管理画面）を実装しmainへマージ
   （ログイン画面、会話一覧・詳細、担当開始、返信、会話完了、Realtime購読等）
-- feature/ai-backendでPhase 3（AIバックエンド）を実装（コミットd5fd3c2、mainへ未マージ）
+- feature/ai-backendでPhase 3（AIバックエンド）を実装（コミットd5fd3c2）
   - FAQ検索（embedding生成 + match_faqs RPC、閾値0.75）
   - Claude Sonnet 5（D-014）へ構造化出力（output_config.format）で問い合わせ、
     outcome（answered/escalated/out_of_scope）でFR-05/FR-06/FR-15を分岐
@@ -77,9 +78,14 @@
   - get-holidays.tsのadmin client参照をcreate-admin-client.ts経由へ変更（mainへ反映済み）。
     server-onlyガードがVitestからの直接テストを妨げていたため
 
+### 2026-08-03
+- feature/ai-backendをmainへマージ（fast-forward、48b99e1）
+- マージ後、npm install・typecheck・lint・vitest（65件、実際のClaude/Supabase呼び出しを
+  含む統合テスト10件含む）・buildをすべて再確認し、問題なし
+- これでPhase 2・3・4がすべてmainへマージ済みとなった
+
 ## 次の作業
-1. feature/ai-backendをmainへマージするか判断する
-2. Phase 5（統合）: AI回答フロー・エスカレーションフロー・オペレーター返信フロー・
+1. Phase 5（統合）: AI回答フロー・エスカレーションフロー・オペレーター返信フロー・
    営業時間外フロー・RLS検証・エラー処理・UI調整
    （顧客UIからrespond-with-aiを呼び出す配線が未実装。現状は顧客がメッセージを送っても
-   AI応答が届かない）
+   AI応答が届かない。これがPhase 5の中心作業になる見込み）
