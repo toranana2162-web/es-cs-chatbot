@@ -8,8 +8,10 @@
 - 提案承認
 - 要件定義・設計作成完了（Phase 0）
 - 共通基盤実装完了（Phase 1、外部手続き含めて完了）
-- feature/customer-widgetでPhase 2（顧客チャットUI）実装完了
-- feature/ai-backend、feature/operator-dashboardは未着手
+- Phase 2（顧客チャットUI）実装完了、mainへマージ済み
+- Phase 4（オペレーター管理画面）実装完了、mainへマージ済み
+- Phase 3（AIバックエンド）実装完了。feature/ai-backendブランチ、mainへ未マージ
+- Phase 5（統合）が未着手
 
 ## 開発ログ
 
@@ -59,7 +61,25 @@
 - Playwrightでdevサーバー・本番Supabaseに対して対話的な動作確認を実施
   （匿名認証→会話作成→メッセージ送信→AI対応中ステータス表示、375px幅でのレイアウト崩れなし）
 - feature/customer-widgetをmainへマージ（本コミット）
+- feature/operator-dashboardでPhase 4（オペレーター管理画面）を実装しmainへマージ
+  （ログイン画面、会話一覧・詳細、担当開始、返信、会話完了、Realtime購読等）
+- feature/ai-backendでPhase 3（AIバックエンド）を実装（コミットd5fd3c2、mainへ未マージ）
+  - FAQ検索（embedding生成 + match_faqs RPC、閾値0.75）
+  - Claude Sonnet 5（D-014）へ構造化出力（output_config.format）で問い合わせ、
+    outcome（answered/escalated/out_of_scope）でFR-05/FR-06/FR-15を分岐
+  - FAQ根拠が0件なのにansweredを選んだ場合はサーバー側で強制的にエスカレーションへ
+    上書きするハルシネーション抑制ガードを実装
+  - Claude API障害時はwaiting_operator + ai_api_errorへフォールバック
+  - 実際のSupabaseプロジェクト・Claude API・OpenAI Embeddings APIに対して
+    test-conversations.jsonのシナリオ1〜6・8・9・12を流す統合テスト10件を実施し全て成功。
+    この過程で「特定商品の在庫確認をFAQの一般案内だけで回答してしまう」システムプロンプトの
+    不備と、テストのシナリオID誤りを発見・修正
+  - get-holidays.tsのadmin client参照をcreate-admin-client.ts経由へ変更（mainへ反映済み）。
+    server-onlyガードがVitestからの直接テストを妨げていたため
 
 ## 次の作業
-1. feature/ai-backendでPhase 3（AIバックエンド）に着手
-2. feature/operator-dashboardでPhase 4（オペレーター管理画面）に着手
+1. feature/ai-backendをmainへマージするか判断する
+2. Phase 5（統合）: AI回答フロー・エスカレーションフロー・オペレーター返信フロー・
+   営業時間外フロー・RLS検証・エラー処理・UI調整
+   （顧客UIからrespond-with-aiを呼び出す配線が未実装。現状は顧客がメッセージを送っても
+   AI応答が届かない）
