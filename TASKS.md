@@ -142,14 +142,27 @@ ConversationList.tsxで表示済み。AIバックエンドが設定する値と�
 ## Phase 5 統合
 - [x] AI回答フロー（send-customer-message.tsからrespondWithAiを呼び出すよう配線。コミットaa41f3d）
 - [x] エスカレーションフロー（コードレビューで確認: claim-conversation.ts/ConversationDetail.tsxがrespond-with-ai.tsの出力するstatus/escalated_reasonと整合。追加実装は不要だった）
-- [ ] オペレーター返信フロー（コードは実装済み・レビュー済みだが、実際に担当開始→返信→顧客側へRealtime到達までの通しの動作確認は未実施）
+- [x] オペレーター返信フロー（実オペレーターセッションでclaim_conversation RPC→返信→顧客セッションからの既読を確認。2名同時担当（D-008）も実セッションで再検証済み。コミット088c908）
 - [x] 営業時間外フロー（コードレビューで確認済み。is_after_hoursの設定・表示側は既に整合。UIでの目視確認は未実施）
-- [ ] RLS検証（匿名認証→自分の会話へのRLS経由insert/readは統合テストで確認済み。顧客Aが顧客Bの会話を読めないこと等、SECURITY.md §8のフルチェックは未実施）
-- [ ] エラー処理（Phase 2/3/4個別のエラー処理は実装済み。統合後の見直しは未実施）
-- [ ] UI調整
+- [x] RLS検証（SECURITY.md §8 / TEST_PLAN.md §4に基づき、顧客A/B・未認証・非オペレーター認証ユーザー・faqs/business_holidays直接アクセス不可を実RLSで検証（全9件成功）。コミット088c908）
+- [x] エラー処理（横断レビュー実施。各Server Actionが{success, error}パターンで一貫し秘密情報も漏れていないことを確認。追加修正なし）
+- [ ] UI調整（ブラウザ未接続のため視覚確認は未実施）
 
 備考: 匿名認証→RLS経由のメッセージ挿入→respondWithAi→AIメッセージ保存という一連の流れを
 実際のSupabaseプロジェクト・Claude APIに対する統合テストで確認済み（コミットaa41f3d）。
+
+**既知の弱点（RLS検証で発見、要判断）**: messagesテーブルのオペレーターINSERTポリシーが
+`assigned_operator_id`を見ておらず、RLSレベルでは担当外のオペレーターでも他会話へ
+メッセージを挿入できてしまう。現状はsend-operator-message.ts（アプリ層）のみがこの制約を
+守っている。2名体制のMVPでは実害は限定的と判断し、今回は仕様として記録するに留めた。
+将来オペレーターが増える場合はRLSポリシーへ`assigned_operator_id = auth.uid()`の
+条件追加を検討すること。
+
+サービスロールキー・Anthropic/OpenAI APIキーがクライアントバンドルに含まれないこと、
+dangerouslySetInnerHTMLが使われていないことも確認済み。
+
+注記: live統合テストをまとめて実行するとSupabase匿名認証のレート制限に達することがある。
+個別ファイルごとには全て成功することを確認済み。
 
 ## Phase 6 納品
 - [ ] Vercelデプロイ
