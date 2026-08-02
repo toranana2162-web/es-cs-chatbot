@@ -100,22 +100,28 @@
 Playwrightでdevサーバー・本番Supabaseに対する対話的な動作確認（匿名認証→会話作成→
 メッセージ送信→ステータス表示）を実施済み。
 
-## Phase 3 AIバックエンド
-- [ ] FAQ Embedding生成
-- [ ] FAQ類似検索
-- [ ] Claude API接続
-- [ ] FAQ根拠付き回答
-- [ ] カテゴリ判定
-- [ ] エスカレーション判定
-- [ ] AI回答保存
-- [ ] 会話状態更新
-- [ ] API失敗時の人間対応切替
-- [ ] ハルシネーション抑制テスト
-- [ ] Claudeレスポンスの構造化出力
-- [ ] Claudeレスポンスのサーバー側検証
-- [ ] API障害時のwaiting_operator切り替え
-- [ ] サポート対象外質問の判定
-- [ ] プロンプトインジェクション対策
+## Phase 3 AIバックエンド（feature/ai-backend、コミットd5fd3c2、mainへ未マージ）
+- [x] FAQ Embedding生成（src/features/faq/embed-query.ts、OpenAI text-embedding-3-small）
+- [x] FAQ類似検索（src/features/faq/search-faqs.ts、match_faqs RPC、閾値0.75）
+- [x] Claude API接続（src/features/ai/claude-client.ts、Claude Sonnet 5、D-014）
+- [x] FAQ根拠付き回答（system-prompt.tsでFAQ本文のみを根拠とするよう指示）
+- [x] カテゴリ判定（構造化出力のcategoryフィールド）
+- [x] エスカレーション判定（outcome=escalatedとescalationReason、FR-06の7条件をClaudeが選択）
+- [x] AI回答保存（respond-with-ai.tsでsender_type=aiのmessagesへinsert）
+- [x] 会話状態更新（escalate結果に応じてai_handling/waiting_operatorへ更新）
+- [x] API失敗時の人間対応切替（catch節でwaiting_operator + ai_api_errorへフォールバック）
+- [x] ハルシネーション抑制テスト（FAQ根拠0件なのにanswered出力時はサーバー側で強制エスカレーション。統合テストで実証済み）
+- [x] Claudeレスポンスの構造化出力（output_config.format、json_schema）
+- [x] Claudeレスポンスのサーバー側検証（validate-response.ts、enum適合・空回答フォールバック）
+- [x] API障害時のwaiting_operator切り替え（統合テストでAPIキー無効化により実際に確認）
+- [x] サポート対象外質問の判定（outcome=out_of_scope、FR-15）
+- [x] プロンプトインジェクション対策（system prompt側で指示優先・秘密情報非開示を明記。顧客入力は別メッセージとして分離）
+
+備考: 実際のSupabaseプロジェクト・Claude API・OpenAI Embeddings APIに対して
+test-conversations.jsonのシナリオ1〜6・8・9・12を流す統合テスト10件を実施し全て成功。
+シナリオ7・10はAIバックエンド単体の対象外（オペレーター返信・同時担当はPhase 5/4の領域）。
+この検証で実際の不具合を2件発見・修正済み（詳細はコミットメッセージ参照）。
+feature/ai-backendはまだmainへマージしていない。
 
 ## Phase 4 オペレーター管理画面
 - [ ] ログイン画面
