@@ -5,11 +5,13 @@ const {
   conversationsInsertMock,
   messagesInsertMock,
   assertWithinRateLimitMock,
+  respondWithAiMock,
 } = vi.hoisted(() => ({
   getUserMock: vi.fn(),
   conversationsInsertMock: vi.fn(),
   messagesInsertMock: vi.fn(),
   assertWithinRateLimitMock: vi.fn(),
+  respondWithAiMock: vi.fn(),
 }));
 
 vi.mock("@/lib/supabase/server", () => ({
@@ -42,6 +44,10 @@ vi.mock("@/lib/validation/rate-limit", () => ({
   assertWithinRateLimit: assertWithinRateLimitMock,
 }));
 
+vi.mock("@/actions/respond-with-ai", () => ({
+  respondWithAi: respondWithAiMock,
+}));
+
 const { sendCustomerMessage } = await import("@/actions/send-customer-message");
 
 beforeEach(() => {
@@ -52,6 +58,7 @@ beforeEach(() => {
   });
   assertWithinRateLimitMock.mockResolvedValue(undefined);
   messagesInsertMock.mockResolvedValue({ data: null, error: null });
+  respondWithAiMock.mockResolvedValue({ success: true });
 });
 
 describe("sendCustomerMessage", () => {
@@ -127,5 +134,27 @@ describe("sendCustomerMessage", () => {
     });
     const result = await sendCustomerMessage("conv-1", "こんにちは");
     expect(result.success).toBe(false);
+  });
+
+  it("メッセージ保存成功後にrespondWithAiをそのconversationIdで呼び出す（Phase 5統合）", async () => {
+    const result = await sendCustomerMessage("conv-1", "送料はいくらですか");
+    expect(result.success).toBe(true);
+    expect(respondWithAiMock).toHaveBeenCalledWith("conv-1");
+  });
+
+  it("respondWithAiが失敗しても顧客への応答はsuccessのままにする", async () => {
+    respondWithAiMock.mockRejectedValue(new Error("claude down"));
+    const result = await sendCustomerMessage("conv-1", "こんにちは");
+    expect(result.success).toBe(true);
+    expect(result.conversationId).toBe("conv-1");
+  });
+
+  it("メッセージ保存に失敗した場合はrespondWithAiを呼ばない", async () => {
+    messagesInsertMock.mockResolvedValue({
+      data: null,
+      error: { message: "insert failed" },
+    });
+    await sendCustomerMessage("conv-1", "こんにちは");
+    expect(respondWithAiMock).not.toHaveBeenCalled();
   });
 });
