@@ -10,7 +10,7 @@ D2Cブランド「BOTANICA」を想定した、ECサイト向けカスタマー�
 
 ## ドキュメント一覧
 - REQUIREMENTS.md：要件定義書
-- ARCHITECTURE.md：アーキテクチャ設計書
+- ARCHITECTURE.md：アーキテクチャ設計書（§9にシステム構成図・ステータス遷移図）
 - DATABASE.md：データベース設計書
 - SECURITY.md：セキュリティ設計書
 - TASKS.md：開発タスク
@@ -18,3 +18,6 @@ D2Cブランド「BOTANICA」を想定した、ECサイト向けカスタマー�
 - DECISIONS.md：設計判断記録
 - PROGRESS.md：進捗管理
 - WORKTREE_PLAN.md：Worktree並列開発計画
+- OPERATOR_GUIDE.md：操作手順書（オペレーター向け）
+- RUNBOOK.md：運用手順書（環境変数・オペレーター登録・監視・ECサイト埋め込み方法など）
+- TROUBLESHOOTING.md：トラブルシューティングガイド

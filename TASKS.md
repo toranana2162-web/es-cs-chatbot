@@ -172,9 +172,9 @@ dangerouslySetInnerHTMLが使われていないことも確認済み。
 - [ ] Vercelデプロイ
 - [ ] 本番環境変数
 - [ ] 本番Supabase設定
-- [ ] ECサイト埋め込み確認
-- [ ] 操作手順書
-- [ ] 運用手順書
-- [ ] アーキテクチャ図
-- [ ] トラブルシューティング
-- [ ] 最終テスト
+- [x] ECサイト埋め込み確認（`/widget-embed`ページを新規追加しiframe埋め込み専用に。別オリジンのモックECページからクロスオリジンiframeで匿名認証〜メッセージ送信〜AI応答〜Realtime表示までPlaywrightで実地検証。サンプルは`public/embed-example.html`、手順はRUNBOOK.md §9）
+- [x] 操作手順書（OPERATOR_GUIDE.md）
+- [x] 運用手順書（RUNBOOK.md）
+- [x] アーキテクチャ図（ARCHITECTURE.md §9、Mermaidでシステム構成図・ステータス遷移図を追加）
+- [x] トラブルシューティング（TROUBLESHOOTING.md）
+- [x] 最終テスト（typecheck / lint / vitest 80件（非live 58件・live 22件を個別実行で全通過）/ `npm run build`をすべて確認）

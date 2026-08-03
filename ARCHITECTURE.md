@@ -237,3 +237,70 @@ src/actions/send-operator-message.ts
 - AIバックエンドはUIコードを変更しない
 - 共通型・DBスキーマ・RLSはmainで確定する
 - DB変更が必要な場合は独断で変更せず設計へ戻る
+
+## 9. アーキテクチャ図
+
+### 9.1 システム構成図
+
+```mermaid
+graph TD
+    subgraph EC["ECサイト"]
+        Widget["顧客向けチャットウィジェット<br/>(src/components/widget/)"]
+    end
+
+    subgraph Vercel["Vercel（Next.js）"]
+        SA_Customer["send-customer-message.ts<br/>(Server Action)"]
+        SA_AI["respond-with-ai.ts<br/>(Server Action)"]
+        SA_Operator["send-operator-message.ts<br/>(Server Action)"]
+        Dashboard["オペレーター管理画面<br/>(/operator)"]
+    end
+
+    subgraph Supabase["Supabase"]
+        Auth["Auth<br/>(匿名 / メール+パスワード)"]
+        DB[("PostgreSQL<br/>conversations / messages /<br/>faqs / operator_profiles /<br/>business_holidays")]
+        Realtime["Realtime<br/>(postgres_changes)"]
+        RLS["Row Level Security"]
+    end
+
+    subgraph External["外部API"]
+        Claude["Claude API<br/>(claude-sonnet-5)"]
+        OpenAI["OpenAI Embeddings<br/>(text-embedding-3-small)"]
+    end
+
+    Operator["オペレーター（ブラウザ）"]
+
+    Widget -- "匿名認証" --> Auth
+    Widget -- "メッセージ送信" --> SA_Customer
+    SA_Customer -- "INSERT (RLS適用)" --> DB
+    SA_Customer -- "非同期に呼び出す" --> SA_AI
+    SA_AI -- "FAQ類似検索 (match_faqs RPC)" --> DB
+    SA_AI -- "Embedding生成" --> OpenAI
+    SA_AI -- "回答生成 (structured output)" --> Claude
+    SA_AI -- "AI回答をINSERT / ステータス更新" --> DB
+
+    Operator -- "メール+パスワード認証" --> Auth
+    Operator -- "ブラウザ操作" --> Dashboard
+    Dashboard -- "担当開始 (claim_conversation RPC)" --> DB
+    Dashboard -- "返信" --> SA_Operator
+    SA_Operator -- "INSERT (RLS適用)" --> DB
+
+    DB -. "変更通知" .-> Realtime
+    Realtime -. "postgres_changes購読" .-> Widget
+    Realtime -. "postgres_changes購読" .-> Dashboard
+
+    RLS -. "全テーブルアクセスを制御" .-> DB
+```
+
+### 9.2 会話ステータス遷移図
+
+```mermaid
+stateDiagram-v2
+    [*] --> ai_handling: 顧客がメッセージ送信（会話作成）
+    ai_handling --> ai_handling: AIがFAQで回答
+    ai_handling --> waiting_operator: エスカレーション条件に該当\n(D-012の8種)またはAPI障害(D-007)
+    waiting_operator --> operator_handling: オペレーターが担当開始\n(先着1名, D-008)
+    operator_handling --> closed: オペレーターが会話完了
+    closed --> [*]
+```
+
+備考: `is_after_hours`はステータスとは独立したフラグ（D-006）。`waiting_operator`中に営業時間外かどうかを管理画面で判別するために使う。

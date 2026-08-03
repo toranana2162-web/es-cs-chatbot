@@ -12,7 +12,8 @@
 - Phase 4（オペレーター管理画面）実装完了、mainへマージ済み
 - Phase 3（AIバックエンド）実装完了、mainへマージ済み
 - Phase 5（統合）完了
-- 残りはPhase 6（納品）のみ
+- Phase 6（納品）着手。ドキュメント4種・EC埋め込み・最終テストが完了、
+  Vercelデプロイ関連（デプロイ本体・本番環境変数・本番Supabase設定）が残る
 
 ## 開発ログ
 
@@ -125,7 +126,21 @@
   - ブラウザでの実際のクリック操作による視覚確認は引き続き未実施
 - これでPhase 5（統合）が完了した
 
+### 2026-08-04
+- Phase 6（納品）に着手（コミット予定）
+  - 操作手順書（OPERATOR_GUIDE.md）、運用手順書（RUNBOOK.md）、
+    トラブルシューティングガイド（TROUBLESHOOTING.md）を新規作成
+  - ARCHITECTURE.md §9にMermaidでシステム構成図・会話ステータス遷移図を追加
+  - ECサイト埋め込み用に`/widget-embed`ページ（ChatWidgetのみを描画、body透過）を新規追加。
+    別オリジンの模擬ECページからクロスオリジンiframeで埋め込み、匿名認証→メッセージ送信→
+    AI応答→Realtime表示までPlaywrightで実地検証し成功。第三者Cookie制限による問題は
+    発生しなかった。埋め込みサンプルは`public/embed-example.html`、手順はRUNBOOK.md §9
+  - 検証で作成したテスト用会話データはSupabaseから削除済み
+  - 最終テスト一式を実施し全て成功: typecheck、lint、vitest 80件
+    （非live 58件 + live 22件を個別実行）、`npm run build`
+  - TASKS.md Phase 6の該当項目を更新
+
 ## 次の作業
-1. ブラウザ接続後、または手動でのPhase 2〜5通しての視覚・操作確認
-2. RLSで見つかったオペレーターINSERTポリシーの弱点への対応要否を判断する
-3. Phase 6（納品）: Vercelデプロイ、本番環境変数、操作・運用手順書等
+1. Vercelデプロイ方針をユーザーと確認（GitHub連携 or Vercel CLI直接デプロイ）
+2. Vercelデプロイ・本番環境変数・本番Supabase設定（要ユーザーのアカウント操作）
+3. RLSで見つかったオペレーターINSERTポリシーの弱点への対応要否を判断する（RUNBOOK.md §8）

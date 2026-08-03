@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<title>BOTANICA ウィジェット埋め込みサンプル</title>
+</head>
+<body>
+  <h1>ECサイト側での埋め込み例</h1>
+  <p>
+    このページと同じ要領で、ECサイトの本文HTML内（例: フッター直前）に
+    以下のiframeタグを1つ貼るだけでチャットウィジェットが右下に表示される。
+  </p>
+
+  <!--
+    BOTANICAサポートチャット 埋め込みタグ
+    src はデプロイ先のドメインに置き換える（例: https://cs-chatbot.example.com/widget-embed）
+  -->
+  <iframe
+    src="https://<デプロイ先ドメイン>/widget-embed"
+    title="BOTANICA サポートチャット"
+    style="
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      width: 400px;
+      height: 620px;
+      border: none;
+      background: transparent;
+      z-index: 999999;
+    "
+  ></iframe>
+</body>
+</html>
