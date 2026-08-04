@@ -169,9 +169,9 @@ dangerouslySetInnerHTMLが使われていないことも確認済み。
 個別ファイルごとには全て成功することを確認済み。
 
 ## Phase 6 納品
-- [ ] Vercelデプロイ
-- [ ] 本番環境変数
-- [ ] 本番Supabase設定
+- [x] Vercelデプロイ（GitHub連携。リポジトリ: https://github.com/toranana2162-web/es-cs-chatbot 、本番URL: https://es-cs-chatbot.vercel.app）
+- [x] 本番環境変数（.env.exampleの6変数をVercelへ設定済み。ユーザーがVercelダッシュボードで設定）
+- [x] 本番Supabase設定（開発と同一のCS-chatbot-projectを使用。匿名認証・RLS等は既に構築済みで追加変更なし）
 - [x] ECサイト埋め込み確認（`/widget-embed`ページを新規追加しiframe埋め込み専用に。別オリジンのモックECページからクロスオリジンiframeで匿名認証〜メッセージ送信〜AI応答〜Realtime表示までPlaywrightで実地検証。サンプルは`public/embed-example.html`、手順はRUNBOOK.md §9）
 - [x] 操作手順書（OPERATOR_GUIDE.md）
 - [x] 運用手順書（RUNBOOK.md）

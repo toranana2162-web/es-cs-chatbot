@@ -12,8 +12,8 @@
 - Phase 4（オペレーター管理画面）実装完了、mainへマージ済み
 - Phase 3（AIバックエンド）実装完了、mainへマージ済み
 - Phase 5（統合）完了
-- Phase 6（納品）着手。ドキュメント4種・EC埋め込み・最終テストが完了、
-  Vercelデプロイ関連（デプロイ本体・本番環境変数・本番Supabase設定）が残る
+- Phase 6（納品）完了。本番URL: https://es-cs-chatbot.vercel.app
+- 残作業: RLSの既知の弱点（オペレーターINSERT）への対応要否の最終判断のみ
 
 ## 開発ログ
 
@@ -140,7 +140,28 @@
     （非live 58件 + live 22件を個別実行）、`npm run build`
   - TASKS.md Phase 6の該当項目を更新
 
+### 2026-08-05
+- GitHubリポジトリ（https://github.com/toranana2162-web/es-cs-chatbot）を作成しmainをpush、
+  Vercelプロジェクトを作成し本番URL（https://es-cs-chatbot.vercel.app）へデプロイ完了
+  （リポジトリ作成・Vercelアカウント操作はユーザーが実施）
+- **本番デプロイ後の実地検証で重大な不具合を発見・修正**: 本番（HTTPS）を別オリジンの
+  模擬ECサイトからクロスオリジンiframeで埋め込むと、匿名認証セッションが確立できず
+  「セッションを開始できませんでした」エラーになっていた。ローカル検証（HTTP/localhost）
+  ではlocalhostがブラウザのサードパーティCookie制限の対象外のため再現しなかった
+  （Phase 6のローカル検証で「問題なし」と報告した内容が本番HTTPS環境では再現しなかった、
+  という発見）
+  - 原因: Supabase Authのセッションcookieがクロスサイトiframe内でブラウザにブロックされていた
+  - 対処: `src/lib/supabase/client.ts` / `server.ts` / `src/proxy.ts`のcookieOptionsへ
+    `sameSite: "none", secure: true, partitioned: true`（CHIPS）を設定
+    （`src/lib/supabase/cookie-options.ts`に共通化。コミット421009e）
+  - 修正後、本番URLに対して別オリジンからのクロスオリジンiframe埋め込みで
+    匿名認証〜メッセージ送信〜AI応答までPlaywrightで再検証し成功を確認
+  - オペレーター側（トップレベルアクセス）への影響がないことも、使い捨てテスト
+    アカウントで本番ログイン〜会話一覧表示まで実地確認し、問題なしを確認
+  - RUNBOOK.md・public/embed-example.htmlの埋め込みサンプルURLを実際の本番URLへ更新
+- TASKS.md Phase 6の残り3項目（Vercelデプロイ・本番環境変数・本番Supabase設定）を更新し、
+  Phase 6が完了した
+
 ## 次の作業
-1. Vercelデプロイ方針をユーザーと確認（GitHub連携 or Vercel CLI直接デプロイ）
-2. Vercelデプロイ・本番環境変数・本番Supabase設定（要ユーザーのアカウント操作）
-3. RLSで見つかったオペレーターINSERTポリシーの弱点への対応要否を判断する（RUNBOOK.md §8）
+1. RLSで見つかったオペレーターINSERTポリシーの弱点への対応要否を判断する（RUNBOOK.md §8）
+2. （任意）納品完了の最終報告
