@@ -98,7 +98,7 @@ D-007の設計により、Claude API呼び出しが失敗した会話は自動�
 
 ```html
 <iframe
-  src="https://<デプロイ先ドメイン>/widget-embed"
+  src="https://es-cs-chatbot.vercel.app/widget-embed"
   title="BOTANICA サポートチャット"
   style="position:fixed;bottom:0;right:0;width:400px;height:620px;border:none;background:transparent;z-index:999999;"
 ></iframe>
