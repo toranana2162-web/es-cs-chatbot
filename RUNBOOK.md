@@ -87,9 +87,9 @@ MVPでは専用の監視ダッシュボード・アラートは未整備。現�
 
 D-007の設計により、Claude API呼び出しが失敗した会話は自動的に`waiting_operator`（`escalated_reason=ai_api_error`）へ切り替わる。顧客メッセージは失われないが、API障害が続く間は全ての新規会話がオペレーター対応待ちに積み上がる点に注意（アラートは未実装のため、会話一覧の`waiting_operator`件数を目視で確認する運用になる）。
 
-## 8. 既知の設計上の弱点（対応要否は都度判断）
+## 8. 既知の設計上の弱点（D-015: 対応しない方針で確定）
 
-- **RLS: 担当外オペレーターによるmessages INSERT**（TASKS.md Phase 5参照）。messagesのオペレーター用INSERTポリシーが`assigned_operator_id`を見ていないため、RLSレベルでは担当外の会話にもメッセージを挿入できる。現状はアプリ層（`send-operator-message.ts`）のみで防いでいる。2名体制のMVPでは実害は限定的と判断し据え置き。オペレーターが増える場合はRLSポリシーの修正を検討する。
+- **RLS: 担当外オペレーターによるmessages INSERT**（TASKS.md Phase 5参照）。messagesのオペレーター用INSERTポリシーが`assigned_operator_id`を見ていないため、RLSレベルでは担当外の会話にもメッセージを挿入できる。現状はアプリ層（`send-operator-message.ts`）のみで防いでいる。2名体制のMVPでは実害がないと判断し、D-015（DECISIONS.md）として対応しないことを正式に確定した。オペレーターが増える場合はRLSポリシーの修正を再検討する。
 - **`operator_profiles.is_active`が未参照**（本書§3参照）。
 
 ## 9. ECサイトへの埋め込み

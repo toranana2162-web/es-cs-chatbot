@@ -13,7 +13,8 @@
 - Phase 3（AIバックエンド）実装完了、mainへマージ済み
 - Phase 5（統合）完了
 - Phase 6（納品）完了。本番URL: https://es-cs-chatbot.vercel.app
-- 残作業: RLSの既知の弱点（オペレーターINSERT）への対応要否の最終判断のみ
+- RLSの既知の弱点（オペレーターINSERT）はD-015として対応しない方針で確定
+- MVP開発は全項目完了
 
 ## 開発ログ
 
@@ -162,6 +163,9 @@
 - TASKS.md Phase 6の残り3項目（Vercelデプロイ・本番環境変数・本番Supabase設定）を更新し、
   Phase 6が完了した
 
+### 2026-08-05（続き）
+- RLSの既知の弱点（オペレーターINSERT）は2名体制のMVPでは実害なしと判断し、
+  対応しないことをD-015としてDECISIONS.mdへ正式に記録した（RUNBOOK.md §8も更新）
+
 ## 次の作業
-1. RLSで見つかったオペレーターINSERTポリシーの弱点への対応要否を判断する（RUNBOOK.md §8）
-2. （任意）納品完了の最終報告
+特になし。MVP開発は全項目完了。
