@@ -180,8 +180,19 @@
   「担当者からの返信をお待ちください」等の即時フィードバックを出す）を提示したところ、
   実装は翌日以降に持ち越すことになった
 
+### 2026-08-06
+- 前日保留にしていた「エスカレーション後の追加メッセージへの即時フィードバック」を実装
+  - `respond-with-ai.ts`の早期リターン分岐（status !== ai_handling）で、waiting_operator/
+    operator_handlingの場合のみsystemメッセージ「メッセージを受け付けました。担当者からの
+    返信までしばらくお待ちください。」を挿入するよう変更。closedの場合は何もしない
+  - 既存のRealtime購読（messages INSERT）にそのまま乗るため、フロント側の購読ロジック変更は不要
+  - 顧客ウィジェット側`MessageBubble.tsx`にsystem種別専用の見た目（中央寄せ・丸みのある
+    控えめな通知バブル）を追加。オペレーター側`MessageList.tsx`は設計時点で既にsystem用の
+    見た目が用意されていたため変更不要だった
+  - tests/integration/respond-with-ai.live.test.tsへ新規3件
+    （waiting_operator/operator_handling/closedそれぞれの挙動）を追加、全13件通過
+  - typecheck/lint/非liveテスト58件/buildを再確認、Playwrightで実際のブラウザ操作
+    （在庫確認質問→エスカレーション→追加質問→system通知表示）も確認
+
 ## 次の作業
-1. **エスカレーション後（waiting_operator/operator_handling）に顧客が追加送信したメッセージに、
-   即時フィードバック（「担当者からの返信をお待ちください」等）を表示する改善**
-   （2026-08-05にユーザーから実装依頼、一旦保留。対象は主に顧客ウィジェット側
-   `src/components/widget/`・`src/actions/send-customer-message.ts`まわり）
+特になし。

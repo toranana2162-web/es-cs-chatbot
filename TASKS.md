@@ -178,3 +178,12 @@ dangerouslySetInnerHTMLが使われていないことも確認済み。
 - [x] アーキテクチャ図（ARCHITECTURE.md §9、Mermaidでシステム構成図・ステータス遷移図を追加）
 - [x] トラブルシューティング（TROUBLESHOOTING.md）
 - [x] 最終テスト（typecheck / lint / vitest 80件（非live 58件・live 22件を個別実行で全通過）/ `npm run build`をすべて確認）
+
+## Phase 6以降の追加改善
+- [x] 本番ルートページ（create-next-appの初期テンプレートのまま残っていた不具合）を修正（コミットa5d9621）
+- [x] エスカレーション後（waiting_operator/operator_handling）に顧客が追加送信したメッセージへ、
+      systemメッセージ（「メッセージを受け付けました。担当者からの返信までしばらくお待ちください。」）で
+      即時フィードバックする機能を追加。`respond-with-ai.ts`の早期リターン分岐に実装し、顧客ウィジェット・
+      オペレーター画面双方の表示にも対応（顧客側は`MessageBubble.tsx`にsystem用の見た目を追加）。
+      vitestで新規3件（waiting_operator/operator_handling/closed）を追加し全13件通過、
+      Playwrightでブラウザ実地確認も実施

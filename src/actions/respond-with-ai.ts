@@ -69,8 +69,23 @@ export async function respondWithAi(
     return { success: false };
   }
 
-  // ai_handling以外（waiting_operator/operator_handling/closed）の会話には介入しない
+  // ai_handling以外（waiting_operator/operator_handling/closed）の会話には介入しない。
+  // ただし既にエスカレーション済み（waiting_operator/operator_handling）の会話へ顧客が
+  // さらにメッセージを送った場合は、AIやオペレーターからの反応が一切ないまま無音になって
+  // しまうため、systemメッセージで受付済みであることだけ即時に伝える（2026-08-06、ユーザー
+  // からの指摘を受けて追加）。closedの会話には表示しない。
   if (conversation.status !== "ai_handling") {
+    if (
+      conversation.status === "waiting_operator" ||
+      conversation.status === "operator_handling"
+    ) {
+      await supabase.from("messages").insert({
+        conversation_id: conversationId,
+        sender_type: "system",
+        sender_id: null,
+        content: "メッセージを受け付けました。担当者からの返信までしばらくお待ちください。",
+      });
+    }
     return { success: true, skipped: true };
   }
 

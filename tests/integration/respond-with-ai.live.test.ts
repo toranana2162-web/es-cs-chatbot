@@ -162,4 +162,76 @@ describe("respondWithAi (live integration)", () => {
 
     expect(aiMessages).toHaveLength(1);
   }, 30_000);
+
+  // 2026-08-06: エスカレーション済み会話への追加メッセージにsystem通知を出す機能の検証
+  it.each([
+    ["waiting_operator" as const],
+    ["operator_handling" as const],
+  ])(
+    "%sの会話へ追加メッセージが来た場合、systemメッセージで受付を通知しai_handlingへは戻さない",
+    async (status) => {
+      const customerUserId = await createTestCustomer();
+      const { data: conversation, error } = await supabase
+        .from("conversations")
+        .insert({ customer_user_id: customerUserId, status })
+        .select("id")
+        .single();
+      if (error || !conversation) {
+        throw new Error(`Failed to seed conversation: ${error?.message}`);
+      }
+      createdConversationIds.push(conversation.id);
+
+      await supabase.from("messages").insert({
+        conversation_id: conversation.id,
+        sender_type: "customer",
+        sender_id: customerUserId,
+        content: "追加の質問です",
+      });
+
+      const result = await respondWithAi(conversation.id);
+
+      expect(result.success).toBe(true);
+      expect(result.skipped).toBe(true);
+
+      const { data: updatedConversation } = await supabase
+        .from("conversations")
+        .select("status")
+        .eq("id", conversation.id)
+        .single();
+      expect(updatedConversation!.status).toBe(status);
+
+      const { data: systemMessages } = await supabase
+        .from("messages")
+        .select("*")
+        .eq("conversation_id", conversation.id)
+        .eq("sender_type", "system");
+      expect(systemMessages).toHaveLength(1);
+      expect(systemMessages![0].content).toContain("お待ちください");
+    },
+    15_000,
+  );
+
+  it("closedの会話へ追加メッセージが来てもsystemメッセージは挿入しない", async () => {
+    const customerUserId = await createTestCustomer();
+    const { data: conversation, error } = await supabase
+      .from("conversations")
+      .insert({ customer_user_id: customerUserId, status: "closed" })
+      .select("id")
+      .single();
+    if (error || !conversation) {
+      throw new Error(`Failed to seed conversation: ${error?.message}`);
+    }
+    createdConversationIds.push(conversation.id);
+
+    const result = await respondWithAi(conversation.id);
+    expect(result.success).toBe(true);
+    expect(result.skipped).toBe(true);
+
+    const { data: systemMessages } = await supabase
+      .from("messages")
+      .select("*")
+      .eq("conversation_id", conversation.id)
+      .eq("sender_type", "system");
+    expect(systemMessages).toHaveLength(0);
+  }, 15_000);
 });
